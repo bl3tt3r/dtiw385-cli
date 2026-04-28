@@ -1,80 +1,50 @@
-use crate::commands::{Infos, Merge};
-use clap::{Parser, Subcommand};
-use std::io::{IsTerminal, stdin, stdout};
-use thiserror::Error;
+use crate::cli::*;
+use clap::Parser;
+use std::io::{self, IsTerminal};
 use tokio::io::{AsyncBufReadExt, BufReader};
 
-pub mod commands;
+mod cli;
+mod errors;
 
-#[derive(Debug, Error)]
-pub enum Error {
-    #[error("Unable to read input from pipe.")]
-    IoIn(#[from] std::io::Error),
-    #[error("Unable to parse input json.")]
-    IoInJson(#[from] serde_json::Error),
-}
-
+/// Entry point of the `dtiw385` CLI.
+///
+/// Parses the command from arguments, then runs it either once (terminal mode)
+/// or for each JSON line received from stdin (pipe mode).
+///
+/// # Exit codes
+///
+/// - `0` — all inputs processed successfully
+/// - `1` — partial success (some inputs failed)
+/// - `2` — fatal error (no input read, or all inputs failed)
 #[tokio::main]
 async fn main() {
-    let instance = Instance::default();
-}
+    let mut input = 0;
+    let mut errors = 0;
 
-pub struct Instance {
-    io_in_is_pipe: bool,
-    io_out_is_pipe: bool,
-    command: Command,
-    count: i32,
-}
+    let cli = Cli::parse();
+    let command = cli.command;
 
-impl Default for Instance {
-    fn default() -> Self {
-        let cli = Cli::parse();
-        Self {
-            io_in_is_pipe: !stdin().is_terminal(),
-            io_out_is_pipe: !stdout().is_terminal(),
-            command: cli.command,
-            count: 0,
+    if io::stdin().is_terminal() {
+        input += 1;
+        if !command.execute().await {
+            errors += 1;
         }
-    }
-}
-
-impl Instance {
-    pub async fn parse(&mut self) -> Result<Option<Command>, Error> {
-        let mut command = self.command.clone();
-        if self.io_in_is_pipe {
-            let stdin = tokio::io::stdin();
-            if let Some(line) = BufReader::new(stdin).lines().next_line().await? {
-                command.merge_from_json(&line)?;
-            } else {
-                return Ok(None);
-            }
-        } else if self.count > 1 {
-            return Ok(None);
-        }
-        self.count += 1;
-        Ok(Some(command))
-    }
-}
-
-#[derive(Parser)]
-#[command(name = "dtiw385")]
-pub struct Cli {
-    #[command(subcommand)]
-    pub command: Command,
-}
-
-#[derive(Subcommand, Clone)]
-pub enum Command {
-    Infos(Infos),
-}
-
-impl Command {
-    fn merge_from_json(&mut self, line: &str) -> Result<(), Error> {
-        match self {
-            Command::Infos(infos) => {
-                infos.merge(serde_json::from_str(line)?);
+    } else {
+        let stdin = tokio::io::stdin();
+        let mut lines = BufReader::new(stdin).lines();
+        while let Ok(Some(json)) = lines.next_line().await {
+            input += 1;
+            let mut command = command.clone(); // snapshot of the initial command
+            if !command.merge_from_json(&json) || !command.execute().await {
+                errors += 1;
             }
         }
-        Ok(())
     }
+
+    std::process::exit(match (input, errors) {
+        (0, _) => 2,          // nothing read → fatal error
+        (_, 0) => 0,          // all good
+        (i, e) if e < i => 1, // partial success
+        _ => 2,               // all failed → fatal
+    });
 }
