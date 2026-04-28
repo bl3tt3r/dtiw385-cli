@@ -1,51 +1,53 @@
-# dtiw385
+# dtiw385-cli
 
-A fast command-line interface for discovering and querying DTIW385 decoders on a network, built on the [`dtiw385`](https://crates.io/crates/dtiw385) library.
+[![License](https://img.shields.io/badge/LICENSE-MIT-blue.svg)](./LICENSE)
+![Rust Edition](https://img.shields.io/badge/edition-2024-orange)
+![Made with Rust](https://img.shields.io/badge/Made%20with-Rust-000000?logo=rust)
+![CI](https://github.com/bl3tt3r/dtiw385-cli/actions/workflows/rust.yml/badge.svg)
 
-## Features
+A command-line interface for discovering and querying [Orange](https://www.orange.fr/) DTIW385 decoders on your network, built on the [`dtiw385`](https://crates.io/crates/dtiw385) library.
 
-- **Scan** a range of IPs and ports to discover decoders on your network
-- **Query** a specific decoder for detailed information
-- **NDJSON pipeline** — chain commands together using newline-delimited JSON streams
-- **Flexible input** — arguments can be passed via CLI flags or piped from stdin as JSON
+__This project is not affiliated with, endorsed by, or sponsored by Orange.__
 
-## Installation
+---
+
+## 📦 Installation
 
 ```bash
 cargo install dtiw385-cli
 ```
 
-## Commands
+---
 
-### `scan`
+## 🚀 Commands
 
-Scans an IP range and a port range to discover reachable decoders. Each discovered decoder is printed as a JSON line to stdout.
+### 🔍 `scan`
+
+Scans a range of IPs and ports to discover reachable decoders. Each result is printed as a JSON line to stdout.
 
 ```bash
 dtiw385 scan --ip-range <start>-<end> --port-range <start>-<end>
 ```
-
-**Arguments**
 
 | Flag           | Format                      | Description                          |
 | -------------- | --------------------------- | ------------------------------------ |
 | `--ip-range`   | `192.168.1.0-192.168.1.255` | Inclusive IPv4 address range to scan |
 | `--port-range` | `8080-8090`                 | Inclusive port range to scan         |
 
-**Example**
+#### 🧪 Example
 
 ```bash
 dtiw385 scan --ip-range 192.168.1.0-192.168.1.255 --port-range 8080-8090
 ```
 
 ```json
-{"ip":"192.168.1.10","port":8080,"id":"abc123"}
-{"ip":"192.168.1.42","port":8085,"id":"def456"}
+{"ip":"192.168.1.10","port":8080}
+{"ip":"192.168.1.42","port":8085}
 ```
 
 ---
 
-### `infos`
+### ℹ️ `infos`
 
 Connects to a specific decoder and retrieves its full information.
 
@@ -53,72 +55,60 @@ Connects to a specific decoder and retrieves its full information.
 dtiw385 infos --ip <address> --port <port>
 ```
 
-**Arguments**
-
 | Flag     | Format         | Description                 |
 | -------- | -------------- | --------------------------- |
 | `--ip`   | `192.168.1.10` | IPv4 address of the decoder |
 | `--port` | `8080`         | Port of the decoder         |
 
-**Example**
+#### 🧪 Example
 
 ```bash
 dtiw385 infos --ip 192.168.1.10 --port 8080
 ```
 
 ```json
-{"ip":"192.168.1.10","port":8080,"id":"abc123","firmware":"1.4.2","uptime":3600}
+{"ip":"192.168.1.10","port":8080,"firmware":"1.4.2","uptime":3600}
 ```
 
 ---
 
-## NDJSON pipeline
+## 🔗 NDJSON pipeline
 
 Both commands speak [NDJSON](https://github.com/ndjson/ndjson-spec) (Newline Delimited JSON): `scan` outputs one JSON object per line, and every command can read JSON objects from stdin to fill in its arguments.
 
-This means commands can be **chained directly** — the output of `scan` feeds naturally into `infos`.
+This means commands can be **chained directly**.
 
-### How stdin merging works
-
-When stdin is not a terminal, the CLI reads one JSON line at a time and merges it with the arguments already provided on the command line. **CLI flags always take priority** over values coming from stdin.
-
-For each input line, the command is executed independently, which makes it straightforward to process multiple decoders in a single pipeline.
-
-### Chaining scan → infos
+### ⛓️ Chain `scan` → `infos`
 
 ```bash
 dtiw385 scan --ip-range 192.168.1.0-192.168.1.255 --port-range 8080-8090 \
   | dtiw385 infos
 ```
 
-`scan` discovers decoders and streams their `ip` and `port` as JSON. `infos` reads each line from stdin, extracts the fields it needs, and queries each decoder in turn.
+`scan` discovers decoders and streams their `ip` and `port` as JSON. `infos` reads each line and queries each decoder in turn.
 
-### Overriding stdin values with CLI flags
+### 🏳️ CLI flags override stdin
 
-CLI flags always win over values coming from stdin. This lets you force a specific port for all decoders found by a scan, regardless of what the scan reported:
+CLI flags always take priority over values coming from stdin. For example, force a specific port regardless of what the scan reported:
 
 ```bash
 dtiw385 scan --ip-range 192.168.1.0-192.168.1.255 --port-range 8080-8090 \
   | dtiw385 infos --port 9000
 ```
 
-### Feeding JSON manually
-
-You can also feed JSON directly without using `scan`:
+### 📄 Feed JSON manually
 
 ```bash
+# single decoder
 echo '{"ip":"192.168.1.10","port":8080}' | dtiw385 infos
-```
 
-Or process a list of known decoders from a file:
-
-```bash
+# list of known decoders
 cat decoders.ndjson | dtiw385 infos
 ```
 
 ---
 
-## Exit codes
+## ⚙️ Exit codes
 
 | Code | Meaning                                         |
 | ---- | ----------------------------------------------- |
@@ -126,10 +116,12 @@ cat decoders.ndjson | dtiw385 infos
 | `1`  | Partial success — at least one input failed     |
 | `2`  | Fatal — no input was read, or all inputs failed |
 
-The distinction between `1` and `2` makes it easy to detect partial failures in scripts.
+---
+
+License: MIT
 
 ---
 
-## License
-
-MIT
+<p align="center">
+  Made with ❤️ and Rust 🦀
+</p>
