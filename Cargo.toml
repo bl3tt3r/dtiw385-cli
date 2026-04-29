@@ -2,6 +2,7 @@
 name = "dtiw385-cli"
 version = "0.1.0"
 edition = "2024"
+description = "CLI to interact with DTIW385 decoders"
 
 [[bin]]
 name = "dtiw385"

@@ -11,17 +11,17 @@ pub enum Error {
     #[error("failed to parse input json object")]
     ParseJson(#[from] serde_json::Error),
 
-    /// The `--ip` argument is missing and was not provided via stdin.
+    /// The `--ip` argument is missing and was not provided.
     #[error("missing required field: --ip")]
     MissingIp,
 
-    /// The `--port` argument is missing and was not provided via stdin.
+    /// The `--port` argument is missing and was not provided.
     #[error("missing required field: --port")]
     MissingPort,
 
     /// The `--ip-range` argument has an invalid format or start > end.
     #[error(
-        "invalid ip range format, must be <starting ip>-<ending ip> where <starting ip> is lower or equal than <ending ip>"
+        "invalid IPv4 range format, must be <starting IPv4>-<ending IPv4> where <starting IPv4> is lower or equal than <ending IPv4>"
     )]
     IpRangeFormat,
 
@@ -31,39 +31,41 @@ pub enum Error {
     )]
     PortRangeFormat,
 
-    /// The `--ip-range` argument is missing and was not provided via stdin.
+    /// The `--ip-range` argument is missing and was not provided.
     #[error("missing required field: --ip-range")]
     MissingIpRange,
 
-    /// The `--port-range` argument is missing and was not provided via stdin.
+    /// The `--port-range` argument is missing and was not provided.
     #[error("missing required field: --port-range")]
     MissingPortRange,
 
-    /// The starting IP address in the range is not a valid IPv4 address.
-    #[error("invalid starting IP address, must be u8.u8.u8.u8-<ending ip>")]
+    /// The starting IPv4 address in the range is not a valid IPv4 address.
+    #[error("invalid starting IPv4 syntaxe")]
     InvalidStartIp,
 
-    /// The ending IP address in the range is not a valid IPv4 address.
-    #[error("invalid ending IP address, must be <starting ip>-u8.u8.u8.u8")]
+    /// The ending IPv4 address in the range is not a valid IPv4 address.
+    #[error("invalid ending IPv4 syntaxe")]
     InvalidEndIp,
 
     /// The starting port in the range is not a valid `u16`.
-    #[error("invalid starting port number, must be u16-<ending port>")]
+    #[error("invalid starting port number")]
     InvalidStartPort,
 
     /// The ending port in the range is not a valid `u16`.
-    #[error("invalid ending port number, must be <starting port>-u16")]
+    #[error("invalid ending port number")]
     InvalidEndPort,
 
     /// An error propagated from the `dtiw385` decoder library.
     #[error("decoder error : {0}")]
     Decoder(#[from] dtiw385::DecoderError),
 
-    /// The `--port-range` argument is missing and was not provided via stdin.
+    /// The `--key` argument is missing and was not provided.
     #[error("missing required field: --key")]
-    InvalidKey,
+    MissingKey,
 
-    /// The `--port-range` argument is missing and was not provided via stdin.
-    #[error("invalid ending port number, must be <starting port>-u16")]
+    /// The `--key` argument have the wrong syntaxe.
+    #[error(
+        "invalid key syntaxe, must be one of (PowerOnOff, Ok, Up, Down, Left, Right, Back, Menu, VolumeUp, VolumeDown, Mute, ChannelUp, ChannelDown, Play, Pause, Stop, Forward, Rewind, N0, N1, N2, N3, N4, N5, N6, N7, N8, N9)"
+    )]
     InvalidKey,
 }

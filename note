@@ -1,0 +1,2 @@
+dtiw385 search --ip-range 192.168.1.0-192.168.1.255 --port-range 8080-8080 | dtiw385 infos | jq -c 'select(.activeStandbyState == "0")' | dtiw385 press --key PowerOnOff
+cargo run search --ip-range 192.168.1.0-192.168.1.255 --port-range 8080-8080 | cargo run infos | jq -c 'select(.activeStandbyState == "0")' | cargo run press --key PowerOnOff

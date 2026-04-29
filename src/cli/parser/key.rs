@@ -4,49 +4,43 @@ use std::str::FromStr;
 
 #[derive(Debug, Clone, Copy, Deserialize, Serialize)]
 pub struct Key {
-    pub code: Key,
+    pub code: u16,
 }
 
 impl FromStr for Key {
     type Err = Error;
-
-    /// Parses an IPv4 range from a `<start>-<end>` string.
-    ///
-    /// # Errors
-    ///
-    /// Returns [`Error::IpRangeFormat`] if the separator is missing or `start > end`.
-    /// Returns [`Error::InvalidStartIp`] or [`Error::InvalidEndIp`] if either address is invalid.
     fn from_str(value: &str) -> Result<Self, Self::Err> {
-        let Key = match value {
-            "PowerOnOff" => Ok(dtiw385::key::Key::TOTO),
-            "Ok" => Ok(dtiw385::key::Key::TOTO),
-            "Up" => Ok(dtiw385::key::Key::TOTO),
-            "Down" => Ok(dtiw385::key::Key::TOTO),
-            "Left" => Ok(dtiw385::key::Key::TOTO),
-            "Right" => Ok(dtiw385::key::Key::TOTO),
-            "Back" => Ok(dtiw385::key::Key::TOTO),
-            "Menu" => Ok(dtiw385::key::Key::TOTO),
-            "VolumeUp" => Ok(dtiw385::key::Key::TOTO),
-            "VolumeDown" => Ok(dtiw385::key::Key::TOTO),
-            "Mute" => Ok(dtiw385::key::Key::TOTO),
-            "ChannelUp" => Ok(dtiw385::key::Key::TOTO),
-            "ChannelDown" => Ok(dtiw385::key::Key::TOTO),
-            "Play" => Ok(dtiw385::key::Key::TOTO),
-            "Pause" => Ok(dtiw385::key::Key::TOTO),
-            "Stop" => Ok(dtiw385::key::Key::TOTO),
-            "Forward" => Ok(dtiw385::key::Key::TOTO),
-            "Rewind" => Ok(dtiw385::key::Key::TOTO),
-            "N0" => Ok(dtiw385::key::Key::TOTO),
-            "N1" => Ok(dtiw385::key::Key::TOTO),
-            "N2" => Ok(dtiw385::key::Key::TOTO),
-            "N3" => Ok(dtiw385::key::Key::TOTO),
-            "N4" => Ok(dtiw385::key::Key::TOTO),
-            "N5" => Ok(dtiw385::key::Key::TOTO),
-            "N6" => Ok(dtiw385::key::Key::TOTO),
-            "N7" => Ok(dtiw385::key::Key::TOTO),
-            "N8" => Ok(dtiw385::key::Key::TOTO),
-            "N9" => Ok(dtiw385::key::Key::TOTO),
+        let key = match value {
+            "PowerOnOff" => Ok(dtiw385::key::Key::PowerOnOff),
+            "Ok" => Ok(dtiw385::key::Key::Ok),
+            "Up" => Ok(dtiw385::key::Key::Up),
+            "Down" => Ok(dtiw385::key::Key::Down),
+            "Left" => Ok(dtiw385::key::Key::Left),
+            "Right" => Ok(dtiw385::key::Key::Right),
+            "Back" => Ok(dtiw385::key::Key::Back),
+            "Menu" => Ok(dtiw385::key::Key::Menu),
+            "VolumeUp" => Ok(dtiw385::key::Key::VolumeUp),
+            "VolumeDown" => Ok(dtiw385::key::Key::VolumeDown),
+            "Mute" => Ok(dtiw385::key::Key::Mute),
+            "ChannelUp" => Ok(dtiw385::key::Key::ChannelUp),
+            "ChannelDown" => Ok(dtiw385::key::Key::ChannelDown),
+            "Play" => Ok(dtiw385::key::Key::Play),
+            "Pause" => Ok(dtiw385::key::Key::Pause),
+            "Stop" => Ok(dtiw385::key::Key::Stop),
+            "Forward" => Ok(dtiw385::key::Key::Forward),
+            "Rewind" => Ok(dtiw385::key::Key::Rewind),
+            "N0" => Ok(dtiw385::key::Key::N0),
+            "N1" => Ok(dtiw385::key::Key::N1),
+            "N2" => Ok(dtiw385::key::Key::N2),
+            "N3" => Ok(dtiw385::key::Key::N3),
+            "N4" => Ok(dtiw385::key::Key::N4),
+            "N5" => Ok(dtiw385::key::Key::N5),
+            "N6" => Ok(dtiw385::key::Key::N6),
+            "N7" => Ok(dtiw385::key::Key::N7),
+            "N8" => Ok(dtiw385::key::Key::N8),
+            "N9" => Ok(dtiw385::key::Key::N9),
             _ => Err(Error::InvalidKey),
         }?;
+        Ok(Key { code: key.into() })
     }
 }
