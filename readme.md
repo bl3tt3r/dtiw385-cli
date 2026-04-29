@@ -21,23 +21,23 @@ cargo install dtiw385-cli
 
 ## 🚀 Commands
 
-### 🔍 `scan`
+### 🔍 `Search`
 
-Scans a range of IPs and ports to discover reachable decoders. Each result is printed as a JSON line to stdout.
+Searchs a range of IPs and ports to discover reachable decoders. Each result is printed as a JSON line to stdout.
 
 ```bash
-dtiw385 scan --ip-range <start>-<end> --port-range <start>-<end>
+dtiw385 Search --ip-range <start>-<end> --port-range <start>-<end>
 ```
 
-| Flag           | Format                      | Description                          |
-| -------------- | --------------------------- | ------------------------------------ |
-| `--ip-range`   | `192.168.1.0-192.168.1.255` | Inclusive IPv4 address range to scan |
-| `--port-range` | `8080-8090`                 | Inclusive port range to scan         |
+| Flag           | Format                      | Description                            |
+| -------------- | --------------------------- | -------------------------------------- |
+| `--ip-range`   | `192.168.1.0-192.168.1.255` | Inclusive IPv4 address range to Search |
+| `--port-range` | `8080-8090`                 | Inclusive port range to Search         |
 
 #### 🧪 Example
 
 ```bash
-dtiw385 scan --ip-range 192.168.1.0-192.168.1.255 --port-range 8080-8090
+dtiw385 Search --ip-range 192.168.1.0-192.168.1.255 --port-range 8080-8090
 ```
 
 ```json
@@ -74,25 +74,25 @@ dtiw385 infos --ip 192.168.1.10 --port 8080
 
 ## 🔗 NDJSON pipeline
 
-Both commands speak [NDJSON](https://github.com/ndjson/ndjson-spec) (Newline Delimited JSON): `scan` outputs one JSON object per line, and every command can read JSON objects from stdin to fill in its arguments.
+Both commands speak [NDJSON](https://github.com/ndjson/ndjson-spec) (Newline Delimited JSON): `Search` outputs one JSON object per line, and every command can read JSON objects from stdin to fill in its arguments.
 
 This means commands can be **chained directly**.
 
-### ⛓️ Chain `scan` → `infos`
+### ⛓️ Chain `Search` → `infos`
 
 ```bash
-dtiw385 scan --ip-range 192.168.1.0-192.168.1.255 --port-range 8080-8090 \
+dtiw385 Search --ip-range 192.168.1.0-192.168.1.255 --port-range 8080-8090 \
   | dtiw385 infos
 ```
 
-`scan` discovers decoders and streams their `ip` and `port` as JSON. `infos` reads each line and queries each decoder in turn.
+`Search` discovers decoders and streams their `ip` and `port` as JSON. `infos` reads each line and queries each decoder in turn.
 
 ### 🏳️ CLI flags override stdin
 
-CLI flags always take priority over values coming from stdin. For example, force a specific port regardless of what the scan reported:
+CLI flags always take priority over values coming from stdin. For example, force a specific port regardless of what the Search reported:
 
 ```bash
-dtiw385 scan --ip-range 192.168.1.0-192.168.1.255 --port-range 8080-8090 \
+dtiw385 Search --ip-range 192.168.1.0-192.168.1.255 --port-range 8080-8090 \
   | dtiw385 infos --port 9000
 ```
 

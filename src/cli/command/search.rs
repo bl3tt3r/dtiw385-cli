@@ -6,18 +6,18 @@ use crate::{
     errors::Error,
 };
 
-/// Arguments for the `scan` subcommand.
+/// Arguments for the `Search` subcommand.
 #[derive(Parser, Deserialize, Serialize, Debug, Clone)]
-pub struct Scan {
-    /// IPv4 address range to scan. Can be provided via stdin JSON.
+pub struct Search {
+    /// IPv4 address range to Search. Can be provided via stdin JSON.
     #[arg(long)]
     ip_range: Option<Ipv4Range>,
-    /// Port range to scan. Can be provided via stdin JSON.
+    /// Port range to Search. Can be provided via stdin JSON.
     #[arg(long)]
     port_range: Option<PortRange>,
 }
 
-impl Command for Scan {
+impl Command for Search {
     /// Merges `ip_range` and `port_range` from a JSON string, giving priority to CLI arguments.
     fn merge_from_json(&mut self, json: &str) -> Result<(), Error> {
         let json = serde_json::from_str::<Self>(json)?;
@@ -26,7 +26,7 @@ impl Command for Scan {
         Ok(())
     }
 
-    /// Scans the given IP and port ranges and prints each discovered decoder as a JSON line to stdout.
+    /// Searchs the given IP and port ranges and prints each discovered decoder as a JSON line to stdout.
     ///
     /// # Errors
     ///

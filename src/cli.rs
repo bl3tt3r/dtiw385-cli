@@ -17,8 +17,8 @@ pub struct Cli {
 /// Available subcommands.
 #[derive(Subcommand, Debug, Clone)]
 pub enum Commands {
-    /// Scan a range of IPs and ports to discover decoders.
-    Scan(Scan),
+    /// Search a range of IPs and ports to discover decoders.
+    Search(Search),
     /// Retrieve information from a specific decoder.
     Infos(Infos),
 }
@@ -29,7 +29,7 @@ impl Commands {
     /// Returns `true` on success, `false` if parsing failed (error is printed to stderr).
     pub fn merge_from_json(&mut self, json: &str) -> bool {
         let result = match self {
-            Commands::Scan(scan) => scan.merge_from_json(json),
+            Commands::Search(Search) => Search.merge_from_json(json),
             Commands::Infos(infos) => infos.merge_from_json(json),
         };
         let is_ok = result.is_ok();
@@ -42,7 +42,7 @@ impl Commands {
     /// Returns `true` on success, `false` if execution failed (error is printed to stderr).
     pub async fn execute(&self) -> bool {
         let result = match self {
-            Commands::Scan(scan) => scan.execute().await,
+            Commands::Search(Search) => Search.execute().await,
             Commands::Infos(infos) => infos.execute().await,
         };
         let is_ok = result.is_ok();

@@ -58,4 +58,12 @@ pub enum Error {
     /// An error propagated from the `dtiw385` decoder library.
     #[error("decoder error : {0}")]
     Decoder(#[from] dtiw385::DecoderError),
+
+    /// The `--port-range` argument is missing and was not provided via stdin.
+    #[error("missing required field: --key")]
+    InvalidKey,
+
+    /// The `--port-range` argument is missing and was not provided via stdin.
+    #[error("invalid ending port number, must be <starting port>-u16")]
+    InvalidKey,
 }
