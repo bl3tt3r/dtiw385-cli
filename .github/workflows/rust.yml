@@ -17,43 +17,51 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Rust
+      - name: Install stable toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy, llvm-tools-preview
+
+      - name: Install nightly toolchain (for udeps)
+        uses: dtolnay/rust-toolchain@nightly
+
+      - name: Cache dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install tools
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-llvm-cov,cargo-hack,cargo-udeps
 
       # ======================
       # Format check
       # ======================
       - name: Check formatting
-        run: cargo fmt --all -- --check
+        run: cargo +stable fmt --all -- --check
 
       # ======================
       # Lint (Clippy)
       # ======================
       - name: Run clippy
-        run: cargo clippy --all-targets --all-features -- -D warnings
+        run: cargo +stable clippy --all-targets --all-features -- -D warnings
 
       # ======================
       # Build
       # ======================
       - name: Build
-        run: cargo build --verbose --all-features
+        run: cargo +stable build --verbose --all-features
 
       # ======================
       # Tests
       # ======================
       - name: Run tests
-        run: cargo test --verbose --all-features
+        run: cargo +stable test --verbose --all-features
 
       # ======================
       # Coverage (llvm-cov)
       # ======================
-      - name: Install cargo-llvm-cov
-        run: cargo install cargo-llvm-cov
-
       - name: Run coverage
-        run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
+        run: cargo +stable llvm-cov --all-features --workspace --lcov --output-path lcov.info
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
@@ -65,17 +73,11 @@ jobs:
       # ======================
       # Check unused dependencies
       # ======================
-      - name: Install cargo-udeps
-        run: cargo install cargo-udeps --locked
-
       - name: Check unused dependencies
         run: cargo +nightly udeps
 
       # ======================
-      # Check unused features
+      # Check feature combinations
       # ======================
-      - name: Install cargo-hack
-        run: cargo install cargo-hack
-
       - name: Check feature combinations
-        run: cargo hack check --each-feature --all
+        run: cargo +stable hack check --each-feature --all

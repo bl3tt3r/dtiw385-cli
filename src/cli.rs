@@ -7,8 +7,13 @@ use serde::Serialize;
 pub mod command;
 pub mod parser;
 
-/// Root CLI structure parsed from command-line arguments.
 #[derive(Parser, Debug)]
+#[command(
+    version,
+    display_name = env!("CARGO_BIN_NAME"),
+    about = env!("CARGO_PKG_DESCRIPTION"),
+    help_template = "{about} [version {version}]\n\n\x1b[1m\x1b[4mUsage:\x1b[0m {usage}\n\n{all-args}"
+)]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Commands,
@@ -17,10 +22,12 @@ pub struct Cli {
 /// Available subcommands.
 #[derive(Subcommand, Debug, Clone)]
 pub enum Commands {
-    /// Scan a range of IPs and ports to discover decoders.
-    Scan(Scan),
+    /// Search a range of IPs and ports to discover decoders.
+    Search(Search),
     /// Retrieve information from a specific decoder.
     Infos(Infos),
+    /// Send a key press to a specific decoder.
+    Press(Press),
 }
 
 impl Commands {
@@ -29,8 +36,9 @@ impl Commands {
     /// Returns `true` on success, `false` if parsing failed (error is printed to stderr).
     pub fn merge_from_json(&mut self, json: &str) -> bool {
         let result = match self {
-            Commands::Scan(scan) => scan.merge_from_json(json),
+            Commands::Search(search) => search.merge_from_json(json),
             Commands::Infos(infos) => infos.merge_from_json(json),
+            Commands::Press(press) => press.merge_from_json(json),
         };
         let is_ok = result.is_ok();
         let _ = result.map_err(print_error);
@@ -42,8 +50,9 @@ impl Commands {
     /// Returns `true` on success, `false` if execution failed (error is printed to stderr).
     pub async fn execute(&self) -> bool {
         let result = match self {
-            Commands::Scan(scan) => scan.execute().await,
+            Commands::Search(search) => search.execute().await,
             Commands::Infos(infos) => infos.execute().await,
+            Commands::Press(press) => press.execute().await,
         };
         let is_ok = result.is_ok();
         let _ = result.map_err(print_error);
