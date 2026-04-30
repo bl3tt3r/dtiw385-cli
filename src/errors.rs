@@ -40,11 +40,11 @@ pub enum Error {
     MissingPortRange,
 
     /// The starting IPv4 address in the range is not a valid IPv4 address.
-    #[error("invalid starting IPv4 syntaxe")]
+    #[error("invalid starting IPv4 syntax")]
     InvalidStartIp,
 
     /// The ending IPv4 address in the range is not a valid IPv4 address.
-    #[error("invalid ending IPv4 syntaxe")]
+    #[error("invalid ending IPv4 syntax")]
     InvalidEndIp,
 
     /// The starting port in the range is not a valid `u16`.
@@ -63,9 +63,9 @@ pub enum Error {
     #[error("missing required field: --key")]
     MissingKey,
 
-    /// The `--key` argument have the wrong syntaxe.
+    /// The `--key` argument have the wrong syntax.
     #[error(
-        "invalid key syntaxe, must be one of (PowerOnOff, Ok, Up, Down, Left, Right, Back, Menu, VolumeUp, VolumeDown, Mute, ChannelUp, ChannelDown, Play, Pause, Stop, Forward, Rewind, N0, N1, N2, N3, N4, N5, N6, N7, N8, N9)"
+        "invalid key syntax, must be one of (PowerOnOff, Ok, Up, Down, Left, Right, Back, Menu, VolumeUp, VolumeDown, Mute, ChannelUp, ChannelDown, Play, Pause, Stop, Forward, Rewind, N0, N1, N2, N3, N4, N5, N6, N7, N8, N9)"
     )]
     InvalidKey,
 }

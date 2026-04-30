@@ -26,7 +26,7 @@ impl Command for Search {
         Ok(())
     }
 
-    /// Searchs the given IP and port ranges and prints each discovered decoder as a JSON line to stdout.
+    /// Searches the given IP and port ranges and prints each discovered decoder as a JSON line to stdout.
     ///
     /// # Errors
     ///

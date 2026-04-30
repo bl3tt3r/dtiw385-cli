@@ -2,13 +2,21 @@ use crate::errors::Error;
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
 
+/// A remote control key mapped to its Linux input event code.
 #[derive(Debug, Clone, Copy, Deserialize, Serialize)]
 pub struct Key {
+    /// Raw Linux input event code sent to the decoder.
     pub code: u16,
 }
 
 impl FromStr for Key {
     type Err = Error;
+
+    /// Parses a key from its name.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Error::InvalidKey`] if the name does not match any known key.
     fn from_str(value: &str) -> Result<Self, Self::Err> {
         let key = match value {
             "PowerOnOff" => Ok(dtiw385::key::Key::PowerOnOff),

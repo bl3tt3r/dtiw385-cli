@@ -2,7 +2,18 @@
 name = "dtiw385-cli"
 version = "0.1.0"
 edition = "2024"
-description = "CLI to interact with DTIW385 decoders"
+description = "CLI to interact with dtiw385 decoders"
+license = "MIT"
+
+repository = "https://github.com/bl3tt3r/dtiw385-cli"
+readme = "readme.md"
+keywords = ["orange", "decoder", "tv", "remote-control", "network"]
+categories = [
+    "command-line-utilities",
+    "api-bindings",
+    "hardware-support",
+    "network-programming",
+]
 
 [[bin]]
 name = "dtiw385"

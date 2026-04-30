@@ -10,8 +10,9 @@ pub mod parser;
 #[derive(Parser, Debug)]
 #[command(
     version,
+    display_name = env!("CARGO_BIN_NAME"),
     about = env!("CARGO_PKG_DESCRIPTION"),
-    help_template = "dtiw385 - {about} [version {version}]\n\n\x1b[1m\x1b[4mUsage:\x1b[0m {usage}\n\n{all-args}"
+    help_template = "{about} [version {version}]\n\n\x1b[1m\x1b[4mUsage:\x1b[0m {usage}\n\n{all-args}"
 )]
 pub struct Cli {
     #[command(subcommand)]
@@ -25,7 +26,7 @@ pub enum Commands {
     Search(Search),
     /// Retrieve information from a specific decoder.
     Infos(Infos),
-    /// Send execution to a specific decoder.
+    /// Send a key press to a specific decoder.
     Press(Press),
 }
 
