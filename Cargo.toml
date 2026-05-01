@@ -25,9 +25,16 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 dtiw385 = { version = "0.1.2", features = ["serializable"] }
 tokio = { version = "1.51.1", features = [
-    "rt-multi-thread",
-    "macros",
-    "io-std",
-    "io-util",
+    "rt",      # runtime de base (suffit avec current_thread)
+    "macros",  # pour #[tokio::main]
+    "io-std",  # pour tokio::io::stdin()
+    "io-util", # pour BufReader / AsyncBufReadExt
 ] }
 clap = { version = "4", features = ["derive"] }
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"
