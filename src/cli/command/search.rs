@@ -6,13 +6,13 @@ use crate::{
     errors::Error,
 };
 
-/// Arguments for the `Search` subcommand.
+/// Arguments for the `search` subcommand.
 #[derive(Parser, Deserialize, Serialize, Debug, Clone)]
 pub struct Search {
-    /// IPv4 address range to Search. Can be provided via stdin JSON.
+    /// IPv4 address range to search. Can be provided via stdin JSON.
     #[arg(long)]
     ip_range: Option<Ipv4Range>,
-    /// Port range to Search. Can be provided via stdin JSON.
+    /// Port range to search. Can be provided via stdin JSON.
     #[arg(long)]
     port_range: Option<PortRange>,
 }

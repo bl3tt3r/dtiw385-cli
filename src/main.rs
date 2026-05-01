@@ -16,7 +16,7 @@ mod errors;
 /// - `0` — all inputs processed successfully
 /// - `1` — partial success (some inputs failed)
 /// - `2` — fatal error (no input read, or all inputs failed)
-#[tokio::main]
+#[tokio::main(flavor = "current_thread")]
 async fn main() {
     let mut input = 0;
     let mut errors = 0;
